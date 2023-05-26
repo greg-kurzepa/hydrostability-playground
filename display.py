@@ -9,9 +9,9 @@ def vec2tuple(vec, do_round=True, offset=(0,0)):
         return (int(round(vec[0][0] + offset[0])), int(round(vec[1][0] + offset[1])))
 
 # Square
-# square_tr_bottom = Triangle(((-1,-1),(1,-1),(1,1)))
-# square_tr_top = Triangle(((-1,-1),(-1,1),(1,1)))
-# square = Shape((square_tr_bottom, square_tr_top))
+square_tr_bottom = Triangle(((-1,-1),(1,-1),(1,1)))
+square_tr_top = Triangle(((-1,-1),(-1,1),(1,1)))
+square = Shape((square_tr_bottom, square_tr_top))
 
 # Anchor
 # tr1 = Triangle(((0,0),(2,1),(0,-1)))
@@ -21,14 +21,14 @@ def vec2tuple(vec, do_round=True, offset=(0,0)):
 # square = Shape((tr1,tr2,tr3,tr4))
 
 # Thin anchor
-tr1 = Triangle(((0,0),(2,1),(0,-1)))
-tr2 = Triangle(((0,0),(-2,1),(0,-1)))
-tr3 = Triangle(((0,0),(0.5,0.25),(0,5)))
-tr4 = Triangle(((0,0),(-0.5,0.25),(0,5)))
-square = Shape((tr1,tr2,tr3,tr4))
+# tr1 = Triangle(((0,0),(2,1),(0,-1)))
+# tr2 = Triangle(((0,0),(-2,1),(0,-1)))
+# tr3 = Triangle(((0,0),(0.5,0.25),(0,5)))
+# tr4 = Triangle(((0,0),(-0.5,0.25),(0,5)))
+# square = Shape((tr1,tr2,tr3,tr4))
 
 # angle, height, submerged_shape = square.float_angle_brute_energy(0.25, N=20)
-angle, height, submerged_shape = square.float_angle_brute_gz(0.25, N=40, plot=True)
+angle, height, submerged_shape = square.float_angle_brute_gz(0.25, N=40, plot=False)
 print(np.rad2deg(angle))
 
 # angle = np.pi/4

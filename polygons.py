@@ -170,7 +170,7 @@ class Shape:
         dh = 1e-5
         h = 0
         diff = 1
-        threshold = 1e-5
+        threshold = 1e-10
         while abs(diff) > threshold:
             shape = self.get_shape_below(Line(line.a+h*line.perp_line, line.d))
             shape2 = self.get_shape_below(Line(line.a+(h+dh)*line.perp_line, line.d))
@@ -273,10 +273,11 @@ class Shape:
 
         return thetas[i_min], heights[i_min], sub_shapes[i_min]
 
-    def catastrophe_locus(self, relative_density, N=20, theta_range=None, plot=False):
+    def catastrophe_locus(self, relative_density, N=20, theta_range=None, ev=False, auto_lim=False, plot=False, ax=None, xlim=(-1,1), ylim=(-1,1)):
         if theta_range is None:
-            theta_range = [-np.pi*1/5, np.pi*1/5]
+            # theta_range = [-np.pi*1/4, np.pi*1/4]
             # theta_range = [-np.pi, np.pi]
+            theta_range = np.deg2rad([-90, 90])
 
         buoyancy_points = [] # buoyancy locus
         perp_locus_lines = [] # perpendicular lines from buoyancy locus
@@ -297,13 +298,42 @@ class Shape:
                 point_intersect = perp_locus_lines[idx].a + t_intersect*perp_locus_lines[idx].d
                 # print(t_intersect)
                 evolute_points.append(point_intersect)
+
+                if plot:
+                    if ax is None:
+                        plt.plot([perp_locus_lines[-1].a[0], perp_locus_lines[-1].get(t_intersect)[0]], [perp_locus_lines[-1].a[1], perp_locus_lines[-1].get(t_intersect)[1]], linewidth=0.1, color="c")
+                    else:
+                        ax.plot([perp_locus_lines[-1].a[0], perp_locus_lines[-1].get(t_intersect)[0]], [perp_locus_lines[-1].a[1], perp_locus_lines[-1].get(t_intersect)[1]], linewidth=0.1, color="c")
             
         if plot:
-            plt.scatter(*zip(*buoyancy_points), c="black", s=5, label="buoyancy locus")
-            plt.scatter(*zip(*evolute_points), c="blue", s=5, label="evolute locus")
-            plt.legend()
-            plt.grid()
-            plt.show()
+            if ax is None:
+                plt.scatter(*zip(*buoyancy_points), c="black", s=5, label="buoyancy locus")
+                plt.scatter(*zip(*evolute_points), c="blue", s=5, label="evolute locus")
+                plt.scatter(self.centroid[0][0], self.centroid[1][0], s=50, label="centre of mass")
+                plt.xlim((-1,1))
+                plt.ylim((-1,1))
+                plt.xlabel("x")
+                plt.ylabel("y")
+                ax = plt.gca()
+                ax.set_aspect('equal', adjustable='box')   
+                # plt.legend()
+                plt.grid()
+                plt.show()
+            else:
+                if not ev: ax.scatter(*zip(*buoyancy_points), c="black", s=2, label="buoyancy locus", zorder=1)
+                ax.scatter(*zip(*evolute_points), c="blue", s=2, label="evolute locus", zorder=1)
+                # ax.scatter(self.centroid[0][0], self.centroid[1][0], s=50, label="centre of mass")
+                if auto_lim:
+                    ax.set_xlim(min(list(zip(*evolute_points))[0])-0.01, max(list(zip(*evolute_points))[0])+0.01)
+                    ax.set_ylim(min(list(zip(*evolute_points))[1])-0.01, max(list(zip(*evolute_points))[1])+0.01)
+                else:
+                    ax.set_xlim(xlim)
+                    ax.set_ylim(ylim)
+                ax.set_xlabel("x")
+                ax.set_ylabel("y")
+                ax.set_aspect('equal', adjustable='box')   
+                # plt.legend()
+                ax.grid()
 
         return buoyancy_points, evolute_points, perp_locus_lines
 
@@ -318,8 +348,33 @@ square = Shape((square_tr_bottom, square_tr_top))
 # tr4 = Triangle(((0,0),(-0.5,0.25),(0,5)))
 # square = Shape((tr1,tr2,tr3,tr4))
 
-square.catastrophe_locus(0.22, N=100, plot=True)
-# square.float_angle_brute_gz(0.1, plot=True)
+# square.catastrophe_locus(0.5, N=100, plot=True)
+
+#MULTIPLOT1
+#----
+# fig = plt.figure(figsize=(4,10))
+# ax = [fig.add_subplot(5,2,i+1) for i in range(10)]
+# # plt.subplots_adjust(wspace=0,hspace=0)
+# square.catastrophe_locus(0.1, N=100, plot=True, ax=ax[0])
+# square.catastrophe_locus(0.2, N=100, plot=True, ax=ax[2])
+# square.catastrophe_locus(0.25, N=100, plot=True, ax=ax[4])
+# square.catastrophe_locus(0.3, N=100, plot=True, ax=ax[6])
+# square.catastrophe_locus(0.5, N=100, plot=True, ax=ax[8])
+
+# square.catastrophe_locus(0.1, N=100, plot=True, ax=ax[1], auto_lim=True, ev=True)
+# square.catastrophe_locus(0.2, N=100, plot=True, ax=ax[3], auto_lim=True, ev=True)
+# square.catastrophe_locus(0.25, N=100, plot=True, ax=ax[5], auto_lim=True, ev=True)
+# square.catastrophe_locus(0.3, N=100, plot=True, ax=ax[7], auto_lim=True, ev=True)
+# square.catastrophe_locus(0.5, N=100, plot=True, ax=ax[9], auto_lim=True, ev=True)
+
+# for i in [1,3,5,7,9]:
+#     ax[i].axis("off")
+
+# fig.savefig("f1", dpi=500, bbox_inches="tight")
+# plt.show()
+#----
+
+# square.float_angle_brute_gz(0.4, plot=True)
 # print(np.rad2deg(square.float_angle_brute_energy(0.1, plot=True)[0]))
 
 #PLOT2
