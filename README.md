@@ -1,6 +1,6 @@
 # hydrostability-playground
 
-Simulaion of hydrostability of 2D shapes using three methods:
+Simulaion to analyse and visualise hydrostability of 2D shapes using three methods:
 - minimum potential energy
 - GZ righting arm
 - catastrophe theory (buoyancy loci & their evolutes)
